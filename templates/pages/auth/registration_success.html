@@ -1,0 +1,72 @@
+{% extends "pages/booking/booking_base.html" %} {% block content %}
+<main>
+  <div
+    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8"
+  >
+    <div class="sm:mx-auto sm:w-full sm:max-w-md"> 
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Registration Successful!
+      </h2>
+    </div>
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div class="text-center">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-mail-check h-6 w-6 text-green-600"
+            >
+              <path
+                d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"
+              ></path>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              <path d="m16 19 2 2 4-4"></path>
+            </svg>
+          </div>
+          <h2 class="text-sm font-medium text-gray-900 mb-4">
+            Thank you for registering with Hotel XYZ
+          </h2>
+          <div class="rounded-md bg-gray-50 p-4 mb-6">
+            <p class="text-sm text-gray-700">
+              We've sent a confirmation email to:<br /><span
+                class="font-medium text-gray-900"
+                >{{email}}</span
+              >
+            </p>
+          </div>
+          <p class="text-sm text-gray-500 mb-8">
+            Please check your email and click on the confirmation link to
+            activate your account. The link will expire in 24 hours.
+          </p>
+          <div class="space-y-3">
+            <p class="text-sm text-gray-500">
+              Didn't receive the email?
+              <a href="{%url 'send_confirmation_email'%}" class="text-blue-600 hover:text-blue-500 font-medium">
+                Resend confirmation email
+              </a>
+            </p>
+            <p class="text-sm text-gray-500">
+              <a
+                class="text-blue-600 hover:text-blue-500 font-medium"
+                href="/login"
+                data-discover="true"
+                >Back to login</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

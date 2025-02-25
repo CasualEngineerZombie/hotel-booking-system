@@ -1,0 +1,82 @@
+<nav class="bg-white shadow">
+  <div class="container mx-auto px-8">
+    <div class="flex items-center justify-between h-16">
+      <a class="flex items-center space-x-2" href="/" data-discover="true"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-hotel h-6 w-6 text-blue-600"
+        >
+          <path d="M10 22v-6.57"></path>
+          <path d="M12 11h.01"></path>
+          <path d="M12 7h.01"></path>
+          <path d="M14 15.43V22"></path>
+          <path d="M15 16a5 5 0 0 0-6 0"></path>
+          <path d="M16 11h.01"></path>
+          <path d="M16 7h.01"></path>
+          <path d="M8 11h.01"></path>
+          <path d="M8 7h.01"></path>
+          <rect x="4" y="2" width="16" height="20" rx="2"></rect></svg
+        ><span class="text-xl font-semibold text-gray-900">Hotel XYZ</span></a
+      >
+
+      {%if user.is_authenticated%}
+      <div class="flex items-center space-x-6">
+        <span class="text-gray-600">Welcome, {{user.email}}</span
+        ><a
+          class="text-gray-600 hover:text-gray-900"
+          href="/bookings"
+          data-discover="true"
+          >My Bookings</a
+        >
+        <form action="{%url 'logout'%}" method="post">
+          {% csrf_token %}
+          <button
+          type="submit"
+          class="flex items-center space-x-1 text-gray-600 hover:text-gray-900"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-log-out h-4 w-4"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" x2="9" y1="12" y2="12"></line></svg
+          ><span>Logout</span>
+        </button>
+        </form>
+      </div>
+      {% else %} 
+      <div class="flex items-center space-x-6">
+        <a
+          class="text-gray-600 hover:text-gray-900"
+          href="/bookings"
+          data-discover="true"
+          >My Bookings</a
+        ><a
+          class="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md transition"
+          href="/booking/new"
+          data-discover="true"
+          >Book Now</a
+        >
+      </div>
+      {% endif %}
+      
+    </div>
+  </div>
+</nav>

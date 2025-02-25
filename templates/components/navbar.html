@@ -1,0 +1,61 @@
+<nav class="absolute w-full z-10 bg-transparent">
+  <div class="container mx-auto px-8">
+    <div class="flex items-center justify-between h-16">
+      <a class="flex items-center space-x-2" href="/" data-discover="true"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-hotel h-6 w-6 text-white"
+        >
+          <path d="M10 22v-6.57"></path>
+          <path d="M12 11h.01"></path>
+          <path d="M12 7h.01"></path>
+          <path d="M14 15.43V22"></path>
+          <path d="M15 16a5 5 0 0 0-6 0"></path>
+          <path d="M16 11h.01"></path>
+          <path d="M16 7h.01"></path>
+          <path d="M8 11h.01"></path>
+          <path d="M8 7h.01"></path>
+          <rect x="4" y="2" width="16" height="20" rx="2"></rect></svg
+        ><span class="text-xl font-semibold text-white">Hotel XYZ</span></a
+      >
+      
+      {%if not user.is_authenticated%}
+      <div class="flex items-center space-x-6">
+        <a
+          class="text-white hover:text-gray-200"
+          href="{%url 'login'%}"
+          data-discover="true"
+          >Sign in</a
+        ><a
+          class="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-md transition"
+          href="{%url 'register'%}"
+          data-discover="true"
+          >Sign up</a
+        >
+      </div>
+      {% else %}
+      <div class="flex items-center space-x-6">
+        <a
+          class="text-white hover:text-gray-200"
+          href="/bookings"
+          data-discover="true"
+          >My Bookings</a
+        ><a
+          class="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-md transition"
+          href="/booking/new"
+          data-discover="true"
+          >Book Now</a
+        >
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</nav>

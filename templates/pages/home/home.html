@@ -1,0 +1,40 @@
+{% extends "base.html" %} 
+{% load static %}
+{% block content %}
+<main>
+  <div class="min-h-screen">
+    <section
+    class="relative h-screen w-full bg-cover bg-center"
+    style="background-image: url('{%static 'images/hero-bg.jpg'%}');"
+  >
+    <div class="absolute inset-0 bg-opacity-50"></div>
+  
+    <div class="relative container mx-auto px-4 h-full flex items-center">
+      <div class="max-w-2xl text-white">
+        <h1 class="text-5xl font-bold mb-6">
+          Experience Luxury Like Never Before
+        </h1>
+        <p class="text-xl mb-8">
+          Discover the perfect blend of comfort, el egance, and exceptional service at Hotel XYZ.
+        </p>
+        <a
+          class="bg-blue-600 text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition"
+          href="/booking/new"
+          data-discover="true"
+        >
+          Book Your Stay
+        </a>
+      </div>
+    </div>
+  </section>
+  
+    
+    {%include 'pages/home/sections/featured.html'%}
+    {%include 'pages/home/sections/rooms.html'%}
+    {% include "components/cta.html" %}
+    
+    
+  </div>
+</main>
+
+{% endblock content %}
