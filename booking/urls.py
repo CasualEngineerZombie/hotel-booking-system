@@ -17,4 +17,6 @@ urlpatterns = [
     
     # ADMIN Page
     path("user-admin", views.admin_page, name="admin_page"),
+    path("user-admin/room/new", views.admin_add_room, name="admin_add_room"),
+    path("user-admin/room/<room_uuid>/update", views.admin_update_room, name="admin_update_room"),
 ]

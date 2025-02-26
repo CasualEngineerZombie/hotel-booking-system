@@ -76,4 +76,17 @@ def checkout_success(request):
 
 @admin_required
 def admin_page(request):
-    return render(request, "pages/admin/admin_page.html")
+    rooms = Room.objects.filter(is_available=True)
+    
+    context = {
+        "rooms": rooms,
+    }
+    return render(request, "pages/admin/admin_page.html", context)
+
+@admin_required
+def admin_add_room(request):
+    return render(request, "pages/admin/room/admin_add_room.html")
+
+@admin_required 
+def admin_update_room(request, room_uuid):
+    return render(request, "pages/admin/room/admin_update_room.html")
