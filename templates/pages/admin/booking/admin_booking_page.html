@@ -65,23 +65,25 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
+          
+          {% for booking in bookings %}
           <tr>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex flex-col">
-                <div class="text-sm font-medium text-gray-900">sad</div>
-                <div class="text-sm text-gray-500">sd@gmail.com</div>
+                <div class="text-sm font-medium text-gray-900">{{booking.guest_name}}</div>
+                <div class="text-sm text-gray-500">{{booking.guest_email}}</div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Feb 18, 2025
+              {{ booking.check_in|date:"M d, Y" }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Mar 6, 2025
+              {{ booking.check_out|date:"M d, Y" }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              standard
+              {{booking.room.room_type}}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{booking.total_guest}}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
@@ -131,138 +133,9 @@
               </button>
             </td>
           </tr>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex flex-col">
-                <div class="text-sm font-medium text-gray-900">Tomboy</div>
-                <div class="text-sm text-gray-500">tomboy@gmail.com</div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Feb 26, 2025
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Feb 27, 2025
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              standard
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                >Active</span
-              >
-            </td>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
-            >
-              <button class="text-blue-600 hover:text-blue-900 mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-pencil w-4 h-4"
-                >
-                  <path
-                    d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                  ></path>
-                  <path d="m15 5 4 4"></path>
-                </svg></button
-              ><button class="text-red-600 hover:text-red-900">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-trash2 w-4 h-4"
-                >
-                  <path d="M3 6h18"></path>
-                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  <line x1="10" x2="10" y1="11" y2="17"></line>
-                  <line x1="14" x2="14" y1="11" y2="17"></line>
-                </svg>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex flex-col">
-                <div class="text-sm font-medium text-gray-900">tomboy</div>
-                <div class="text-sm text-gray-500">riadrops1@gmail.com</div>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Feb 26, 2025
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              Feb 27, 2025
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              standard
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span
-                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                >Active</span
-              >
-            </td>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
-            >
-              <button class="text-blue-600 hover:text-blue-900 mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-pencil w-4 h-4"
-                >
-                  <path
-                    d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-                  ></path>
-                  <path d="m15 5 4 4"></path>
-                </svg></button
-              ><button class="text-red-600 hover:text-red-900">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-trash2 w-4 h-4"
-                >
-                  <path d="M3 6h18"></path>
-                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  <line x1="10" x2="10" y1="11" y2="17"></line>
-                  <line x1="14" x2="14" y1="11" y2="17"></line>
-                </svg>
-              </button>
-            </td>
-          </tr>
+          {% endfor %}
+            
+          
         </tbody>
       </table>
     </div>

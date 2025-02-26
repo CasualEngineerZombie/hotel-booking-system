@@ -88,8 +88,7 @@ class BookingCreateForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = [
-            "guest_name", 
-            "guest_email", 
+            "guest_name",  
             "room", 
             "check_in", 
             "check_out", 
@@ -101,14 +100,11 @@ class BookingCreateForm(forms.ModelForm):
                 "placeholder": "Enter guest name",
                 "class": "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             }),
-            "guest_email": forms.EmailInput(attrs={
-                "placeholder": "Enter email address",
-                "class": "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            }),
+             
             "special_request": forms.Textarea(attrs={
                 "placeholder": "Any special requests or preferences?",
                 "class": "mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none",
                 "rows": 4
             })
         }
-
+ 

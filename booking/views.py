@@ -6,7 +6,11 @@ from core.decorators import admin_required
 
 
 def home_page(request):
-    return render(request, "pages/home/home.html")
+    rooms = Room.objects.filter(is_available=True)[:3]
+    context = {
+        "rooms": rooms,
+    }
+    return render(request, "pages/home/home.html", context)
 
 
 @login_required(login_url="login")
@@ -49,7 +53,9 @@ def booking_add(request, room_uuid):
     if request.method == "POST":
         form = BookingCreateForm(request.POST)
         if form.is_valid():
-            form.save()
+            booking = form.save(commit=False)
+            booking.guest_email = request.user.email 
+            booking.save()
             return redirect("bookings")
     else:
         form = BookingCreateForm(initial={'room': room})
@@ -85,9 +91,11 @@ def checkout_success(request):
 @admin_required
 def admin_page(request):
     rooms = Room.objects.all()
+    bookings = Booking.objects.all()
 
     context = {
         "rooms": rooms,
+        "bookings": bookings,
     }
     return render(request, "pages/admin/admin_page.html", context)
 

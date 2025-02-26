@@ -25,10 +25,7 @@
           <!-- Email -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.guest_email.id_for_label }}">Email</label>
-            {{ form.guest_email }}
-            {% if form.guest_email.errors %}
-              <p class="text-red-500 text-xs italic">{{ form.guest_email.errors.0 }}</p>
-            {% endif %}
+            <input disabled value="{{user.email}}" type="text" placeholder="Enter guest name" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"> 
           </div>
           <!-- Check-in and Check-out Dates -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
