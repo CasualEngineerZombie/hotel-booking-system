@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from booking.forms import BookingUpdateForm, BookingCreateForm
-from booking.models import Booking
+from booking.models import Booking, Room
+from core.decorators import admin_required
 
-
-# Create your views here.
+ 
 def home_page(request):
     return render(request, "pages/home/home.html")
 
@@ -53,3 +53,27 @@ def booking_add(request):
     else:
         form = BookingCreateForm()
     return render(request, "pages/booking/booking_add.html", {"form": form})
+
+
+def room_list(request):
+    rooms = Room.objects.filter(is_available=True)
+    
+    context = {
+        "rooms": rooms,
+    }
+    return render(request, "pages/room/room_list.html", context)
+
+
+def checkout_page(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+    context = {
+        "room" : room,
+    }
+    return render(request, "pages/checkout/checkout_booking.html", context)
+
+def checkout_success(request):
+    return render(request, "pages/checkout/checkout_succes.html")
+
+@admin_required
+def admin_page(request):
+    return render(request, "pages/admin/admin_page.html")

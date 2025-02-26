@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from booking.models import Booking, Room
+from booking.models import Booking, Room, Amenity
 
 # Register your models here.
 @admin.register(Room)
@@ -14,3 +14,5 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = ('guest_name', 'guest_email', 'room', 'check_in', 'check_out', 'created_at')
     search_fields = ('guest_name', 'guest_email', 'room__room_number')
     list_filter = ('check_in', 'check_out')
+    
+admin.site.register(Amenity)
