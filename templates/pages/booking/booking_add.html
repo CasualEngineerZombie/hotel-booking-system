@@ -2,12 +2,12 @@
 {% block content %}
 <main>
   <div class="max-w-2xl mx-auto px-4 py-8">
-    <a href="{% url 'bookings' %}" class="flex items-center text-gray-600 hover:text-gray-900 mb-6">
+    <a href="javascript:history.back()" class="flex items-center text-gray-600 hover:text-gray-900 mb-6">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left h-4 w-4 mr-1">
         <path d="m12 19-7-7 7-7"></path>
         <path d="M19 12H5"></path>
       </svg>
-      Back to Bookings
+      Back to Rooms
     </a>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">New Booking</h1>
@@ -46,15 +46,16 @@
                 <p class="text-red-500 text-xs italic">{{ form.check_out.errors.0 }}</p>
               {% endif %}
             </div>
-          </div>
-          <!-- Room Type -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.room.id_for_label }}">Room Type</label>
-            {{ form.room }}
-            {% if form.room.errors %}
-              <p class="text-red-500 text-xs italic">{{ form.room.errors.0 }}</p>
-            {% endif %}
-          </div>
+          </div> 
+          <!-- Room -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="room">Room</label>
+              <select id="room" name="room" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <option value="{{ room.pk }}" selected>{{ room.room_name }}</option>
+                <!-- Optionally, add more options here if you allow changing the room -->
+              </select>
+            </div>
+
           <!-- Number of Guests -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1" for="{{ form.total_guest.id_for_label }}">Number of Guests</label>

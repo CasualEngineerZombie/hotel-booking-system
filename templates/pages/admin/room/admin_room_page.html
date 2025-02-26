@@ -1,3 +1,4 @@
+{% load humanize %}
 <div class="bg-white rounded-lg shadow-sm">
   <div class="p-4 border-b border-gray-200 flex justify-between items-center">
     <div class="relative flex-1 max-w-md">
@@ -18,7 +19,7 @@
       ><input
         type="text"
         placeholder="Search rooms..."
-        class="pl-10 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        class="w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pl-12"
         value=""
       />
     </div>
@@ -85,7 +86,7 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex flex-col">
               <div class="text-sm font-medium text-gray-900">
-                {{room.name}}
+                {{room.room_name}}
               </div>
               <div class="text-sm text-gray-500">
                 {{room.description}}
@@ -101,12 +102,20 @@
             {{room.max_guest}} guests
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            $199/night
+            ₱{{room.price|floatformat:"0"|intcomma}}/night
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
+            
+            {% if room.is_available %}
             <span
-              class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 capitalize"
-              >available</span
+            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 capitalize"
+            >available</span
+            {% else %}
+            <span
+              class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 capitalize"
+              >unavailable</span
+            {% endif %}
+              
             >
           </td>
           <td
