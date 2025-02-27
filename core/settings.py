@@ -32,8 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "booking",
-    "users",
-    "djstripe",
+    "users", 
 ]
 
 MIDDLEWARE = [
@@ -133,8 +132,12 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
-STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
-STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
-STRIPE_LIVE_MODE = False   
-DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"  # Get it from the section in the Stripe dashboard where you added the webhook endpoint
-DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id" 
+# STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
+# STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
+# STRIPE_LIVE_MODE = False   
+# DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"  # Get it from the section in the Stripe dashboard where you added the webhook endpoint
+# DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id" 
+ 
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY") 
+YOUR_DOMAIN = "http://localhost:8000"  # change to your production domain when deploying

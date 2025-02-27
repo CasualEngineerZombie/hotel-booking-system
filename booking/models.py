@@ -55,6 +55,7 @@ class Booking(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
     special_request = models.CharField(max_length=200)
+    paid = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Booking for {self.guest_name} ({self.room.room_number})"

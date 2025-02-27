@@ -6,8 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("booking.urls")),
-    path("", include("users.urls")),
-    path("stripe/", include("djstripe.urls", namespace="djstripe")),
+    path("", include("users.urls")), 
 ]
 
 if settings.DEBUG:
