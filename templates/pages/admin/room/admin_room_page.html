@@ -1,5 +1,9 @@
 {% load humanize %}
-<div x-data="{ showDeleteModal: false, selectedRoomUUID: '' }" class="relative">
+<div x-data="{ 
+        searchTerm: '',
+        showDeleteModal: false, 
+        selectedRoomUUID: '' 
+      }" class="relative">
   <div class="bg-white rounded-lg shadow-sm">
     <div class="p-4 border-b border-gray-200 flex justify-between items-center">
       <div class="relative flex-1 max-w-md">
@@ -22,11 +26,10 @@
           type="text"
           placeholder="Search rooms..."
           class="w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pl-12"
-          value=""
+          x-model="searchTerm"
         />
       </div>
-      <a href="{% url 'admin_add_room' %}"
-         class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
+      <a href="{% url 'admin_add_room' %}" class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -71,7 +74,13 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           {% for room in rooms %}
-          <tr>
+          <tr 
+            data-room-name="{{ room.room_name }}"
+            data-description="{{ room.description }}"
+            x-show="!searchTerm || 
+                    (($el.getAttribute('data-room-name') || '').toLowerCase().includes(searchTerm.toLowerCase())) || 
+                    (($el.getAttribute('data-description') || '').toLowerCase().includes(searchTerm.toLowerCase()))"
+          >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex flex-col">
                 <div class="text-sm font-medium text-gray-900">{{ room.room_name }}</div>
@@ -99,7 +108,6 @@
               {% endif %}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              
               <div class="flex items-center justify-end space-x-4">
                 <a href="{% url 'admin_update_room' room.room_uuid %}" class="text-blue-600 hover:text-blue-900 mr-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil w-4 h-4">
@@ -117,7 +125,6 @@
                   </svg>
                 </button>
               </div>
-              
             </td>
           </tr>
           {% endfor %}
@@ -125,7 +132,7 @@
       </table>
     </div>
   </div>
-  
+
   <!-- Delete Confirmation Modal -->
   <div x-show="showDeleteModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="bg-white rounded-lg p-6 w-96">
