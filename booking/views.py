@@ -370,6 +370,22 @@ def admin_update_room(request, room_uuid):
 
 
 
+@admin_required
+def admin_delete_booking(request, booking_uuid):
+    booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+    
+    if request.method == "POST":
+        # Perform the deletion
+        booking.delete()
+        return redirect("admin_page")  # Or wherever you list bookings for admin
+    
+    # For GET, render a confirmation page
+    context = {
+        "booking": booking,
+    }
+    return render(request, "pages/admin/booking/admin_delete_booking.html", context)
+
+
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body

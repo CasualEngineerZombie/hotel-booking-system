@@ -1,41 +1,42 @@
-{% extends "pages/booking/booking_base.html" %} 
+{% extends "pages/booking/booking_base.html" %}
 {% load humanize %}
 
 {% block content %}
-<main>
+<main x-data="roomFilters()" class="relative">
   <div class="container mx-auto px-4 py-8 max-w-7xl">
     <div class="flex flex-col md:flex-row justify-between items-start gap-6">
-      <div
-        class="w-full md:w-64 bg-white rounded-lg shadow-sm p-6 hidden md:block"
-      >
+      
+      <!-- FILTER SIDEBAR -->
+      <div class="w-full md:w-64 bg-white rounded-lg shadow-sm p-6 hidden md:block">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-lg font-semibold text-gray-900">Filters</h2>
-          <button class="md:hidden text-gray-500 hover:text-gray-700">×</button>
         </div>
         <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Price Range</label
-            >
-            <div class="space-y-2">
-              <input
-                type="range"
-                min="0"
-                max="1000"
-                step="50"
-                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                value="500"
-              />
-              <div class="flex justify-between text-sm text-gray-600">
-                <span>$0</span><span>$500</span>
-              </div>
+          
+          <!-- Price Range -->
+          <div class="space-y-2">
+            <input
+              type="range"
+              min="0"
+              max="20000"
+              step="50"
+              class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              x-model.number="priceRange"
+            />
+            <div class="flex justify-between text-sm text-gray-600">
+              <span>$0</span>
+              <!-- Use x-text to display the dynamic value -->
+              <span x-text="'$' + priceRange"></span>
             </div>
           </div>
+          
+          
+          <!-- Min. Capacity -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Min. Capacity</label
-            ><select
+            <label class="block text-sm font-medium text-gray-700 mb-2">Min. Capacity</label>
+            <select
               class="w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none bg-no-repeat bg-right pr-10"
+              x-model.number="minCapacity"
               style="
                 background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e');
                 background-size: 1.25rem;
@@ -48,138 +49,66 @@
               <option value="4">4 people</option>
             </select>
           </div>
+          
+          <!-- Features -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-3"
-              >Features</label
-            >
+            <label class="block text-sm font-medium text-gray-700 mb-3">Features</label>
             <div class="space-y-3">
-              <label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >wifi</span
-                ></label
-              ><label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >tv</span
-                ></label
-              ><label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >bathroom</span
-                ></label
-              ><label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >coffee</span
-                ></label
-              ><label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >minibar</span
-                ></label
-              ><label class="flex items-center"
-                ><input
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 transition-all duration-200"
-                /><span class="ml-3 text-sm text-gray-700 capitalize"
-                  >workspace</span
-                ></label
-              >
+              <!-- Each checkbox sets a string in `selectedFeatures` array -->
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600"
+                       :value="'Wifi'" x-model="selectedFeatures"/>
+                <span class="ml-3 text-sm text-gray-700 capitalize">wifi</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600"
+                       :value="'TV'" x-model="selectedFeatures"/>
+                <span class="ml-3 text-sm text-gray-700 capitalize">tv</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600"
+                       :value="'Shower'" x-model="selectedFeatures"/>
+                <span class="ml-3 text-sm text-gray-700 capitalize">bathroom</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600"
+                       :value="'Coffee'" x-model="selectedFeatures"/>
+                <span class="ml-3 text-sm text-gray-700 capitalize">coffee</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-600"
+                       :value="'Massage'" x-model="selectedFeatures"/>
+                <span class="ml-3 text-sm text-gray-700 capitalize">Massage</span>
+              </label>
+             
             </div>
           </div>
         </div>
       </div>
+      
+      <!-- ROOMS LIST -->
       <div class="flex-1">
-        {% comment %} <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1 relative">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path></svg
-              ><input
-                type="text"
-                placeholder="Search rooms..."
-                class="w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pl-12"
-                value=""
-              />
-            </div>
-            <div class="flex gap-4">
-              <select
-                class="w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none bg-no-repeat bg-right pr-10"
-                style="
-                  background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e');
-                  background-size: 1.25rem;
-                "
-              >
-                <option value="rating">Top Rated</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option></select
-              ><button
-                class="md:hidden inline-flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-sliders-horizontal w-5 h-5 mr-2"
-                >
-                  <line x1="21" x2="14" y1="4" y2="4"></line>
-                  <line x1="10" x2="3" y1="4" y2="4"></line>
-                  <line x1="21" x2="12" y1="12" y2="12"></line>
-                  <line x1="8" x2="3" y1="12" y2="12"></line>
-                  <line x1="21" x2="16" y1="20" y2="20"></line>
-                  <line x1="12" x2="3" y1="20" y2="20"></line>
-                  <line x1="14" x2="14" y1="2" y2="6"></line>
-                  <line x1="8" x2="8" y1="10" y2="14"></line>
-                  <line x1="16" x2="16" y1="18" y2="22"></line></svg
-                >Filters
-              </button>
-            </div>
-          </div>
-        </div> {% endcomment %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {% for room in rooms %}
-          <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
+          <!-- Each card has data-* attributes for filtering. -->
+          <div
+            class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
+            x-show="showRoom($el)"
+            data-price="{{ room.price }}"
+            data-capacity="{{ room.max_guest }}"
+            data-amenities="{% for a in room.amenities.all %}{{ a.name }}{% if not forloop.last %},{% endif %}{% endfor %}"
+          >
             <img
-              src="{{room.photo.url}}"
-              alt="Premium Deluxe"
+              src="{{ room.photo.url }}"
+              alt="{{ room.room_name }}"
               class="w-full h-48 object-cover"
             />
-            <div class="p-6">
+            <div class="p-6 flex-1 flex flex-col justify-between">
               <div class="flex justify-between items-start mb-2">
                 <h3 class="text-lg font-semibold text-gray-900">
-                  {{room.room_name}}
+                  {{ room.room_name }}
                 </h3>
-                <div class="flex items-center">
+                {% comment %} <div class="flex items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -194,12 +123,13 @@
                   >
                     <path
                       d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
-                    ></path></svg
-                  ><span class="ml-1 text-sm text-gray-600">4.7</span>
-                </div>
+                    ></path>
+                  </svg>
+                  <span class="ml-1 text-sm text-gray-600">4.7</span>
+                </div> {% endcomment %}
               </div>
               <p class="text-gray-600 text-sm mb-4">
-                {{room.description}}
+                {{ room.description }}
               </p>
               <div class="flex items-center gap-4 mb-4">
                 <div class="flex items-center text-gray-600">
@@ -218,152 +148,193 @@
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                     <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg
-                  ><span class="text-sm">Up to {{room.max_guest}}</span>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                  <span class="text-sm">Up to {{ room.max_guest }}</span>
                 </div>
-                <div class="text-sm text-gray-600">{{room.area|floatformat:"0"}} m²</div>
+                <div class="text-sm text-gray-600">
+                  {{ room.area|floatformat:"0" }} m²
+                </div>
               </div>
+              
+              <!-- Amenity icons... (already in place) -->
               <div class="flex gap-2 mb-4">
                
-               {% for amenity in room.amenities.all %}
-                
-                {% if amenity.name == "Wifi" %}
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="wifi"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-wifi w-4 h-4"
-                  >
-                    <path d="M12 20h.01"></path>
-                    <path d="M2 8.82a15 15 0 0 1 20 0"></path>
-                    <path d="M5 12.859a10 10 0 0 1 14 0"></path>
-                    <path d="M8.5 16.429a5 5 0 0 1 7 0"></path>
-                  </svg>
-                </div>
-                {% elif amenity.name == "TV" %}
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="tv"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-tv w-4 h-4"
-                  >
-                    <rect
-                      width="20"
-                      height="15"
-                      x="2"
-                      y="7"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                    <polyline points="17 2 12 7 7 2"></polyline>
-                  </svg>
-                </div>
-                {% elif amenity.name == "Shower" %}
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="bathroom"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-bath w-4 h-4"
-                  >
-                    <path d="M10 4 8 6"></path>
-                    <path d="M17 19v2"></path>
-                    <path d="M2 12h20"></path>
-                    <path d="M7 19v2"></path>
-                    <path
-                      d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"
-                    ></path>
-                  </svg>
-                </div>
-                {% elif amenity.name == "Coffee" %}
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="coffee"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-coffee w-4 h-4"
-                  >
-                    <path d="M10 2v2"></path>
-                    <path d="M14 2v2"></path>
-                    <path
-                      d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"
-                    ></path>
-                    <path d="M6 2v2"></path>
-                  </svg>
-                </div>
-                {% endif %}
-                  
-               {% endfor %}
-                
-                
-                
-                
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="minibar"
-                ></div>
-                <div
-                  class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
-                  title="workspace"
-                ></div>
-              </div>
+                {% for amenity in room.amenities.all %}
+                 
+                 {% if amenity.name == "Wifi" %}
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="wifi"
+                 >
+                   <svg
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="lucide lucide-wifi w-4 h-4"
+                   >
+                     <path d="M12 20h.01"></path>
+                     <path d="M2 8.82a15 15 0 0 1 20 0"></path>
+                     <path d="M5 12.859a10 10 0 0 1 14 0"></path>
+                     <path d="M8.5 16.429a5 5 0 0 1 7 0"></path>
+                   </svg>
+                 </div>
+                 {% elif amenity.name == "TV" %}
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="tv"
+                 >
+                   <svg
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="lucide lucide-tv w-4 h-4"
+                   >
+                     <rect
+                       width="20"
+                       height="15"
+                       x="2"
+                       y="7"
+                       rx="2"
+                       ry="2"
+                     ></rect>
+                     <polyline points="17 2 12 7 7 2"></polyline>
+                   </svg>
+                 </div>
+                 {% elif amenity.name == "Shower" %}
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="bathroom"
+                 >
+                   <svg
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="lucide lucide-bath w-4 h-4"
+                   >
+                     <path d="M10 4 8 6"></path>
+                     <path d="M17 19v2"></path>
+                     <path d="M2 12h20"></path>
+                     <path d="M7 19v2"></path>
+                     <path
+                       d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"
+                     ></path>
+                   </svg>
+                 </div>
+                 {% elif amenity.name == "Coffee" %}
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="coffee"
+                 >
+                   <svg
+                     xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="lucide lucide-coffee w-4 h-4"
+                   >
+                     <path d="M10 2v2"></path>
+                     <path d="M14 2v2"></path>
+                     <path
+                       d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"
+                     ></path>
+                     <path d="M6 2v2"></path>
+                   </svg>
+                 </div>
+                 {% endif %}
+                   
+                {% endfor %}
+                 
+                 
+                 
+                 
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="minibar"
+                 ></div>
+                 <div
+                   class="text-gray-600 p-1.5 bg-gray-50 rounded-md"
+                   title="workspace"
+                 ></div>
+               </div>
+              
+              <!-- Price & Book Now -->
               <div class="flex items-center justify-between">
                 <div class="text-lg font-bold text-gray-900">
-                  ₱{{room.price|floatformat:"0"|intcomma}}<span class="text-sm font-normal text-gray-600"
-                    >/night</span
-                  >
+                  ₱{{ room.price|floatformat:"0"|intcomma }}
+                  <span class="text-sm font-normal text-gray-600">/night</span>
                 </div>
                 <a
                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                  href="{%url 'booking_add' room.room_uuid%}"
-                  data-discover="true" 
-                  >Book Now</a
+                  href="{% url 'booking_add' room.room_uuid %}"
+                  data-discover="true"
                 >
+                  Book Now
+                </a>
               </div>
             </div>
           </div>
-          {% endfor %}  
+          {% endfor %}
+          
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<script>
+  function roomFilters() {
+    return {
+      priceRange: 20000,       // Increased default so rooms up to $1000 appear
+      minCapacity: 0,         // Show all capacities initially
+      selectedFeatures: [],   // No features selected by default
+
+      showRoom(el) {
+        let price = parseFloat(el.getAttribute('data-price')) || 0;
+        let capacity = parseInt(el.getAttribute('data-capacity')) || 0;
+        let amenities = el.getAttribute('data-amenities')
+                          .split(',')
+                          .map(a => a.trim());
+
+        // Price filter
+        if (price > this.priceRange) return false;
+
+        // Capacity filter
+        if (this.minCapacity > 0 && capacity < this.minCapacity) return false;
+
+        // Features filter
+        for (let feat of this.selectedFeatures) {
+          // If an amenity name doesn't match exactly, it fails
+          if (!amenities.includes(feat)) return false;
+        }
+
+        return true;
+      }
+    };
+  }
+</script>
+
 {% endblock content %}

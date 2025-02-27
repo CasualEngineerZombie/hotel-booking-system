@@ -32,7 +32,16 @@ urlpatterns = [
         views.admin_delete_room,
         name="admin_delete_room",
     ),
-    path("user-admin/booking/<booking_uuid>", views.admin_update_booking, name="admin_update_booking"),
+    path(
+        "user-admin/booking/<booking_uuid>/update",
+        views.admin_update_booking,
+        name="admin_update_booking",
+    ),
+    path(
+        "user-admin/booking/<booking_uuid>/delete",
+        views.admin_delete_booking,
+        name="admin_delete_booking",
+    ),
     # Stripe Webhook
     path("stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
 ]
