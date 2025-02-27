@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     "booking",
     "users", 
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://fleet-fowl-select.ngrok-free.app"
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
