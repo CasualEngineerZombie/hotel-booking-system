@@ -35,11 +35,12 @@ def booking_list(request):
     return render(request, "pages/booking/booking_list.html", context)
 
 
+@login_required(login_url="login")
 def booking_detail(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     return render(request, "pages/booking/booking_detail.html", {"booking": booking})
 
-
+@login_required(login_url="login")
 def booking_update(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
@@ -54,13 +55,14 @@ def booking_update(request, booking_id):
     return render(request, "pages/booking/booking_update.html", {"form": form})
 
 
+@login_required(login_url="login")
 def booking_delete(request, booking_id):
     if request.method == "POST":
         booking = Booking.objects.get(id=booking_id)
         booking.delete()
         return redirect("bookings")
 
-
+@login_required(login_url="login")
 def booking_add(request, room_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     if request.method == "POST":
@@ -137,7 +139,7 @@ def admin_update_booking(request, booking_uuid):
 
 
 
-@login_required
+@login_required(login_url="login")
 def create_checkout_session(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
@@ -253,7 +255,7 @@ def room_list(request):
     return render(request, "pages/room/room_list.html", context)
 
 
-@login_required
+@login_required(login_url="login")
 def checkout_page(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
