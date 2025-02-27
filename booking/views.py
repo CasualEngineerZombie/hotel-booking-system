@@ -12,7 +12,7 @@ import stripe
 import uuid
 from django.http import HttpResponseNotAllowed
 from django.utils.dateparse import parse_date
-from booking.utils import calculate_total_price
+from booking.utils import calculate_total_price, get_stripe_metrics
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -280,12 +280,14 @@ def checkout_page(request, room_uuid, booking_uuid):
 def admin_page(request):
     rooms = Room.objects.all()
     bookings = Booking.objects.all()
-
+    metrics = get_stripe_metrics()  # Get real data from Stripe
     context = {
         "rooms": rooms,
         "bookings": bookings,
+        "metrics": metrics,
     }
     return render(request, "pages/admin/admin_page.html", context)
+
 
 
 @admin_required

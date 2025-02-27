@@ -1,4 +1,6 @@
 {% extends "pages/booking/booking_base.html" %}
+{% load humanize math_extras %}
+
 
 {% block content %}
 <div x-data="{ activeTab: 'bookings' }" class="container mx-auto px-8 py-8 max-w-7xl">
@@ -13,7 +15,7 @@
       <div class="flex items-start justify-between">
         <div>
           <p class="text-gray-500 text-sm">Total Bookings</p>
-          <h3 class="text-2xl font-bold mt-2">3</h3>
+          <h3 class="text-2xl font-bold mt-2">{{ metrics.total_bookings }}</h3>
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-calendar w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -25,30 +27,28 @@
         </div>
       </div>
       <div class="mt-4 flex items-center">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-arrow-up w-4 h-4 text-green-500"
-          >
-            <path d="m5 12 7-7 7 7" />
-            <path d="M12 19V5" />
+        {% if metrics.total_bookings_change >= 0 %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-up w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7"></path>
+            <path d="M12 19V5"></path>
           </svg>
-        <span class="text-sm text-green-500 ml-1">12% from last month</span>
+          <span class="text-sm text-green-500 ml-1">{{ metrics.total_bookings_change }}% from last month</span>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-down w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+          <span class="text-sm text-red-500 ml-1">{{ metrics.total_bookings_change|abs_val }}% from last month</span>
+        {% endif %}
       </div>
     </div>
+    
     <!-- Card: Active Bookings -->
     <div class="bg-white rounded-lg p-6 shadow-sm">
       <div class="flex items-start justify-between">
         <div>
           <p class="text-gray-500 text-sm">Active Bookings</p>
-          <h3 class="text-2xl font-bold mt-2">3</h3>
+          <h3 class="text-2xl font-bold mt-2">{{ metrics.active_bookings }}</h3>
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-users w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -60,30 +60,28 @@
         </div>
       </div>
       <div class="mt-4 flex items-center">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-arrow-up w-4 h-4 text-green-500"
-          >
-            <path d="m5 12 7-7 7 7" />
-            <path d="M12 19V5" />
+        {% if metrics.active_bookings_change >= 0 %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-up w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7"></path>
+            <path d="M12 19V5"></path>
           </svg>
-        <span class="text-sm text-green-500 ml-1">8% from last month</span>
+          <span class="text-sm text-green-500 ml-1">{{ metrics.active_bookings_change }}% from last month</span>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-down w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+          <span class="text-sm text-red-500 ml-1">{{ metrics.active_bookings_change|abs_val }}% from last month</span>
+        {% endif %}
       </div>
     </div>
+    
     <!-- Card: Total Revenue -->
     <div class="bg-white rounded-lg p-6 shadow-sm">
       <div class="flex items-start justify-between">
         <div>
           <p class="text-gray-500 text-sm">Total Revenue</p>
-          <h3 class="text-2xl font-bold mt-2">$600</h3>
+          <h3 class="text-2xl font-bold mt-2">₱{{ metrics.total_revenue|floatformat:"0"|intcomma }}</h3>
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-dollar-sign w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -93,30 +91,32 @@
         </div>
       </div>
       <div class="mt-4 flex items-center">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-arrow-up w-4 h-4 text-green-500"
-          >
-            <path d="m5 12 7-7 7 7" />
-            <path d="M12 19V5" />
+        {% if metrics.total_revenue_change >= 0 %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-up w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7"></path>
+            <path d="M12 19V5"></path>
           </svg>
-        <span class="text-sm text-green-500 ml-1">15% from last month</span>
+          <span class="text-sm text-green-500 ml-1">{{ metrics.total_revenue_change }}% from last month</span>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-down w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+          <span class="text-sm text-red-500 ml-1">{{ metrics.total_revenue_change|abs_val }}% from last month</span>
+        {% endif %}
       </div>
     </div>
+    
     <!-- Card: Occupancy Rate -->
     <div class="bg-white rounded-lg p-6 shadow-sm">
       <div class="flex items-start justify-between">
         <div>
           <p class="text-gray-500 text-sm">Occupancy Rate</p>
-          <h3 class="text-2xl font-bold mt-2">15%</h3>
+          {% if metrics.occupancy_rate %}
+            <h3 class="text-2xl font-bold mt-2">{{ metrics.occupancy_rate }}%</h3>
+          {% else %}
+            <h3 class="text-2xl font-bold mt-2">N/A</h3>
+          {% endif %}
         </div>
         <div class="p-3 bg-blue-50 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-hotel w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -134,8 +134,19 @@
         </div>
       </div>
       <div class="mt-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down w-4 h-4 text-red-500"><path d="M12 5v14"></path><path d="m19 12-7 7-7-7"></path></svg>
-        <span class="text-sm text-red-500 ml-1">5% from last month</span>
+        {% if metrics.occupancy_rate_change >= 0 %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-up w-4 h-4 text-green-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m5 12 7-7 7 7"></path>
+            <path d="M12 19V5"></path>
+          </svg>
+          <span class="text-sm text-green-500 ml-1">{{ metrics.occupancy_rate_change }}% from last month</span>
+        {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-arrow-down w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14"></path>
+            <path d="m19 12-7 7-7-7"></path>
+          </svg>
+          <span class="text-sm text-red-500 ml-1">{{ metrics.occupancy_rate_change|abs_val }}% from last month</span>
+        {% endif %}
       </div>
     </div>
   </div>
