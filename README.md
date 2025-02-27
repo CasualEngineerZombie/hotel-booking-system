@@ -26,7 +26,7 @@ A Django-based hotel booking application with Stripe integration, room managemen
 ## 2. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/hotel-booking-system.git
+git clone https://github.com/CasualEngineerZombie/hotel-booking-system.git
 cd hotel-booking-system
 ```
 
