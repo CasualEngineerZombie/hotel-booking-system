@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from booking.forms import BookingUpdateForm, BookingCreateForm
-from booking.models import Booking, Room
+from booking.models import Amenity, Booking, Room
 from core.decorators import admin_required
 from django.conf import settings 
 from django.core.mail import send_mail
@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
+import uuid
+
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -209,7 +211,45 @@ def admin_page(request):
 
 @admin_required
 def admin_add_room(request):
+    if request.method == "POST":
+        # Extract form fields from request.POST and request.FILES
+        room_name = request.POST.get("name")
+        room_type = request.POST.get("type")   # e.g. "Single", "Double", "Suite"
+        price = request.POST.get("price")
+        capacity = request.POST.get("capacity")
+        area = request.POST.get("size")
+        description = request.POST.get("description")
+        photo = request.FILES.get("photo")
+        
+        # Generate a room number (unique identifier)
+        room_number = "RM" + uuid.uuid4().hex[:6].upper()
+        
+        # Create and save the Room instance
+        room = Room(
+            room_name=room_name,
+            room_type=room_type,
+            price=price,
+            description=description,
+            max_guest=capacity,
+            area=area,
+            photo=photo,
+            room_number=room_number,
+            is_available=True,
+        )
+        room.save()
+        
+        # Process amenities (multiple checkboxes with name "amenities")
+        amenities_list = request.POST.getlist("amenities")
+        for amenity_name in amenities_list:
+            amenity_obj, created = Amenity.objects.get_or_create(name=amenity_name.capitalize())
+            room.amenities.add(amenity_obj)
+        
+        # Redirect to admin dashboard or a success page
+        return redirect("admin_page")
+    
+    # If GET request, render the form template.
     return render(request, "pages/admin/room/admin_add_room.html")
+
 
 
 @admin_required
