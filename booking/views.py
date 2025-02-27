@@ -4,6 +4,9 @@ from booking.forms import BookingUpdateForm, BookingCreateForm
 from booking.models import Booking, Room
 from core.decorators import admin_required
 from django.conf import settings
+import json
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 import stripe
 
 
@@ -59,11 +62,13 @@ def booking_add(request, room_uuid):
         form = BookingCreateForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
-            booking.guest_email = request.user.email 
+            booking.guest_email = request.user.email
             booking.save()
-            return redirect("checkout", room_uuid=room.room_uuid, booking_uuid=booking.booking_uuid)
+            return redirect(
+                "checkout", room_uuid=room.room_uuid, booking_uuid=booking.booking_uuid
+            )
     else:
-        form = BookingCreateForm(initial={'room': room})
+        form = BookingCreateForm(initial={"room": room})
     context = {
         "form": form,
         "room": room,
@@ -75,39 +80,58 @@ def create_checkout_session(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
 
-    # Construct the checkout session
     checkout_session = stripe.checkout.Session.create(
-        payment_method_types=['card'],
+        payment_method_types=["card"],
         line_items=[
             {
-                'price_data': {
-                    'currency': 'php',  # Adjust currency as needed
-                    'product_data': {
-                        'name': room.room_name,
+                "price_data": {
+                    "currency": "php",
+                    "product_data": {
+                        # 'images': [room.photo.url],
+                        "name": room.room_name,
+                        "description": room.description,
                     },
-                    # Stripe requires amounts to be in the smallest currency unit
-                    'unit_amount': int(room.price * 100),
+                    "unit_amount": int(room.price * 100),
                 },
-                'quantity': 1,
+                "quantity": 1,
             },
         ],
-        mode='payment',
-        success_url=settings.YOUR_DOMAIN + f"/booking/success/?session_id={{CHECKOUT_SESSION_ID}}",
+        mode="payment",
+        customer_email=request.user.email,
+        success_url=settings.YOUR_DOMAIN
+        + f"/booking/success/?session_id={{CHECKOUT_SESSION_ID}}",
         cancel_url=settings.YOUR_DOMAIN + f"/booking/cancel/",
+        metadata={
+            "total_guest": booking.total_guest,
+            "booking_uuid": booking.booking_uuid,
+            "room_uuid": room.room_uuid,
+        },
     )
 
-    # Redirect to the Stripe hosted payment page
     return redirect(checkout_session.url)
 
 
 def payment_success(request):
-    # Optionally, verify the session_id, update the booking/payment status, etc.
+    session_id = request.GET.get("session_id")
+    if session_id:
+        session = stripe.checkout.Session.retrieve(session_id)
+        booking_uuid = session.get("metadata", {}).get("booking_uuid")
+        booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+        room = booking.room  # assuming the Booking model has a foreign key to Room
+        payment_id = session["payment_intent"]
+        context = {
+            "booking": booking,
+            "room": room,
+            "payment_id": payment_id,
+        }
+        return render(request, "pages/checkout/payment_success.html", context)
+    # Optionally, handle missing session_id
     return render(request, "pages/checkout/payment_success.html")
+
 
 def payment_cancel(request):
     # Inform the user that the payment was canceled
     return render(request, "pages/checkout/payment_cancel.html")
-
 
 
 def room_list(request):
@@ -119,18 +143,15 @@ def room_list(request):
     return render(request, "pages/room/room_list.html", context)
 
 
+@login_required
 def checkout_page(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
     context = {
         "room": room,
-        "booking" : booking,
+        "booking": booking,
     }
     return render(request, "pages/checkout/checkout_booking.html", context)
-
-
-def checkout_success(request):
-    return render(request, "pages/checkout/checkout_succes.html")
 
 
 @admin_required
@@ -153,3 +174,38 @@ def admin_add_room(request):
 @admin_required
 def admin_update_room(request, room_uuid):
     return render(request, "pages/admin/room/admin_update_room.html")
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
+    try:
+        event = stripe.Webhook.construct_event(
+            payload,
+            sig_header,
+            settings.STRIPE_WEBHOOK_SECRET,
+        )
+    except ValueError:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    # Handle the checkout session completed event
+    if (
+        event["type"] == "checkout.session.completed"
+        or event["type"] == "payment_intent.succeeded"
+        or event["type"] == "checkout.session.async_payment_succeeded"
+    ):
+        session = event["data"]["object"]
+        # Retrieve the booking's UUID from the session metadata
+        booking_uuid = session.get("metadata", {}).get("booking_uuid")
+        if booking_uuid:
+            booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+            booking.paid = True
+            booking.save()
+
+    # Return a 200 response to acknowledge receipt of the event
+    return HttpResponse(status=200)

@@ -28,4 +28,7 @@ urlpatterns = [
         views.admin_update_room,
         name="admin_update_room",
     ),
+    
+    # Stripe Webhook
+    path('stripe/webhook/', views.stripe_webhook, name='stripe_webhook'),
 ]

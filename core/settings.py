@@ -18,7 +18,9 @@ SECRET_KEY = "django-insecure-@dfjletazv$b(-)sj=79)owig5rmx_u+c*o8a!@dy&hwz6(u$q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "*",
+]
 
 
 # Application definition
@@ -131,13 +133,9 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
-
-# STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
-# STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
-# STRIPE_LIVE_MODE = False   
-# DJSTRIPE_WEBHOOK_SECRET = "whsec_xxx"  # Get it from the section in the Stripe dashboard where you added the webhook endpoint
-# DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id" 
+ 
  
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY") 
-YOUR_DOMAIN = "http://localhost:8000"  # change to your production domain when deploying
+YOUR_DOMAIN = "http://localhost:8000"   
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")

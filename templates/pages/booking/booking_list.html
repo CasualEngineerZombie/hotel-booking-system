@@ -19,10 +19,19 @@
             <div>
               <div class="flex items-center gap-3 mb-2">
                 <h3 class="text-xl font-semibold text-gray-900">{{booking.guest_name}} : {{booking.room.room_name}}</h3>
+                
+                {% if booking.paid %}
                 <span
                   class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700"
-                  >Active</span
+                  >Paid</span
                 >
+                {% else %}
+                <span
+                    class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700"
+                    >Unpaid</span
+                  >
+                {% endif %}
+                  
               </div>
               <p class="text-gray-500">{{booking.guest_email}}</p>
             </div>
