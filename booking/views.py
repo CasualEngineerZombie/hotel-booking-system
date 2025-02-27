@@ -3,8 +3,9 @@ from django.contrib.auth.decorators import login_required
 from booking.forms import BookingUpdateForm, BookingCreateForm
 from booking.models import Booking, Room
 from core.decorators import admin_required
-from django.conf import settings
-import json
+from django.conf import settings 
+from django.core.mail import send_mail
+from django.template.loader import render_to_string 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -100,7 +101,8 @@ def create_checkout_session(request, room_uuid, booking_uuid):
         customer_email=request.user.email,
         success_url=settings.YOUR_DOMAIN
         + f"/booking/success/?session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url=settings.YOUR_DOMAIN + f"/booking/cancel/",
+        cancel_url=settings.YOUR_DOMAIN
+        + f"/booking/cancel/?session_id={{CHECKOUT_SESSION_ID}}",
         metadata={
             "total_guest": booking.total_guest,
             "booking_uuid": booking.booking_uuid,
@@ -113,25 +115,64 @@ def create_checkout_session(request, room_uuid, booking_uuid):
 
 def payment_success(request):
     session_id = request.GET.get("session_id")
+    if not session_id:
+        # Optionally, you could also redirect or show an error message
+        return render(request, "pages/checkout/payment_success.html", {"error": "Session ID missing."})
+
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+    except Exception as e:
+        # Optionally log the error here
+        return render(request, "pages/checkout/payment_success.html", {"error": "Could not retrieve session."})
+
+    booking_uuid = session.get("metadata", {}).get("booking_uuid")
+    booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+    room = booking.room  # assuming Booking has a foreign key to Room
+    payment_id = session.get("payment_intent")
+
+    # Prepare and send a confirmation email to the guest
+    subject = "Booking Confirmation"
+    email_context = {
+        "booking": booking,
+        "room": room,
+        "payment_id": payment_id,
+    }
+    message_html = render_to_string("emails/booking_confirmation_email.html", email_context)
+    recipient_list = [booking.guest_email]
+    send_mail(
+        subject,
+        message_html,  # Using the HTML content as the message body; you could also provide a plain text version
+        settings.DEFAULT_FROM_EMAIL,
+        recipient_list,
+        html_message=message_html,
+    )
+
+    context = {
+        "booking": booking,
+        "room": room,
+        "payment_id": payment_id,
+    }
+    return render(request, "pages/checkout/payment_success.html", context)
+
+
+
+def payment_cancel(request):
+    session_id = request.GET.get("session_id")
     if session_id:
         session = stripe.checkout.Session.retrieve(session_id)
         booking_uuid = session.get("metadata", {}).get("booking_uuid")
         booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
-        room = booking.room  # assuming the Booking model has a foreign key to Room
-        payment_id = session["payment_intent"]
+        room = booking.room  # assuming Booking has a foreign key to Room
+        payment_id = session.get("payment_intent")
         context = {
             "booking": booking,
             "room": room,
             "payment_id": payment_id,
         }
-        return render(request, "pages/checkout/payment_success.html", context)
-    # Optionally, handle missing session_id
-    return render(request, "pages/checkout/payment_success.html")
-
-
-def payment_cancel(request):
-    # Inform the user that the payment was canceled
+        return render(request, "pages/checkout/payment_cancel.html", context)
+    # Optionally handle missing session_id
     return render(request, "pages/checkout/payment_cancel.html")
+
 
 
 def room_list(request):

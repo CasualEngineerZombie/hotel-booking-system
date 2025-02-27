@@ -1,0 +1,73 @@
+{% extends "pages/booking/booking_base.html" %}
+{% load humanize %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-16">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-x-circle h-6 w-6 text-red-600"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">Payment Cancelled</h1>
+    <p class="text-gray-600 mb-8">
+      Your payment was not completed. Please try again or contact support if you need assistance.
+    </p>
+    <div class="bg-gray-50 rounded-lg p-6 text-left mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Booking Details</h2>
+      <div class="space-y-3">
+        <div>
+          <span class="text-sm text-gray-500">Booking ID</span>
+          <p class="font-medium">{{ booking.booking_uuid }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Guest Name</span>
+          <p class="font-medium">{{ booking.guest_name }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Room Type</span>
+          <p class="font-medium capitalize">{{ room.room_type }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Check-in</span>
+          <p class="font-medium">{{ booking.check_in|date:"M d, Y" }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Check-out</span>
+          <p class="font-medium">{{ booking.check_out|date:"M d, Y" }}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">Total Amount</span>
+          <p class="font-medium">₱{{ room.price|floatformat:"0"|intcomma }}</p>
+        </div>
+        {% if payment_id %}
+        <div>
+          <span class="text-sm text-gray-500">Payment ID</span>
+          <p class="font-medium">{{ payment_id }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="space-y-4">
+      <a
+        class="block w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        href="{% url 'bookings' %}"
+        data-discover="true"
+      >View My Bookings</a>
+       
+    </div>
+  </div>
+</div>
+{% endblock content %}

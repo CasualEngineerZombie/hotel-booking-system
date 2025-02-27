@@ -20,13 +20,16 @@ class LoginForm(forms.Form):
                   "focus:border-blue-500 sm:text-sm"),
     }))
 
+
 class RegistrationForm(UserCreationForm):
     full_name = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={
             "id": "name",
             "autocomplete": "name",
-            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 "
+                     "rounded-md shadow-sm placeholder-gray-400 focus:outline-none "
+                     "focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
         })
     )
     email = forms.EmailField(
@@ -34,7 +37,9 @@ class RegistrationForm(UserCreationForm):
         widget=forms.EmailInput(attrs={
             "id": "email",
             "autocomplete": "email",
-            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 "
+                     "rounded-md shadow-sm placeholder-gray-400 focus:outline-none "
+                     "focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
         })
     )
     password1 = forms.CharField(
@@ -42,7 +47,9 @@ class RegistrationForm(UserCreationForm):
         widget=forms.PasswordInput(attrs={
             "id": "password",
             "autocomplete": "new-password",
-            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 "
+                     "rounded-md shadow-sm placeholder-gray-400 focus:outline-none "
+                     "focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
         })
     )
     password2 = forms.CharField(
@@ -50,7 +57,9 @@ class RegistrationForm(UserCreationForm):
         widget=forms.PasswordInput(attrs={
             "id": "password2",
             "autocomplete": "new-password",
-            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+            "class": "appearance-none block w-full px-3 py-2 border border-gray-300 "
+                     "rounded-md shadow-sm placeholder-gray-400 focus:outline-none "
+                     "focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
         })
     )
 
@@ -59,13 +68,27 @@ class RegistrationForm(UserCreationForm):
         # We use full_name and email instead of a separate username field.
         fields = ("full_name", "email", "password1", "password2")
 
+    def clean_email(self):
+        """
+        Ensure the email is not already taken.
+        """
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this email already exists.")
+        return email
+
     def save(self, commit=True):
         user = super().save(commit=False)
         full_name = self.cleaned_data.get("full_name")
         email = self.cleaned_data.get("email")
-        user.username = email  # Use email as the username
-        user.first_name = full_name  # Store full name in first_name (or split as needed)
+
+        # Use the email as the username
+        user.username = email
+        # Store the full name in first_name (or split it as needed)
+        user.first_name = full_name
         user.email = email
+
         if commit:
             user.save()
         return user
+

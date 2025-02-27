@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Booking Confirmation</title>
+    <style>
+      /* General resets and basic styling for emails */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f9fafb;
+        font-family: Arial, sans-serif;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .header {
+        background-color: #1e3a8a; /* Dark blue brand color */
+        color: #ffffff;
+        text-align: center;
+        padding: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+      }
+      .content h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #111827; /* Dark gray */
+      }
+      .content p {
+        margin: 0 0 15px 0;
+        line-height: 1.5;
+        color: #4b5563; /* Gray-600 */
+      }
+      .cta-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #2563eb; /* Blue-600 */
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      .footer {
+        background-color: #f3f4f6; /* Gray-100 */
+        padding: 10px;
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280; /* Gray-500 */
+      }
+      /* "Why Choose Us" icons or placeholders */
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+      .feature {
+        width: 48%;
+        margin-bottom: 15px;
+      }
+      .feature-icon {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 10px;
+      }
+      .feature-title {
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 5px;
+      }
+      .feature-desc {
+        color: #4b5563;
+        font-size: 14px;
+      }
+
+      /* Responsive adjustments */
+      @media only screen and (max-width: 600px) {
+        .features {
+          display: block;
+        }
+        .feature {
+          width: 100% !important;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Full-width background -->
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#f9fafb">
+      <tr>
+        <td align="center">
+          <!-- Container -->
+          <table class="container" width="600" border="0" cellspacing="0" cellpadding="0">
+            <!-- Header Section -->
+            <tr>
+              <td class="header">
+                <h1>Booking Confirmation</h1>
+              </td>
+            </tr>
+
+            <!-- Main Content -->
+            <tr>
+              <td class="content">
+                <h2>Hi {{ booking.guest_name }},</h2>
+                <p>
+                  Thank you for choosing our services! Your booking has been confirmed.
+                  Below are the details of your reservation:
+                </p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                  <li><strong>Booking ID:</strong> {{ booking.booking_uuid }}</li>
+                  <li><strong>Room:</strong> {{ room.room_name }} ({{ room.room_type }})</li>
+                  <li><strong>Check-in:</strong> {{ booking.check_in|date:"M d, Y" }}</li>
+                  <li><strong>Check-out:</strong> {{ booking.check_out|date:"M d, Y" }}</li>
+                  <li><strong>Payment ID:</strong> {{ payment_id }}</li>
+                </ul>
+                <p>
+                  We look forward to hosting you! If you have any questions or special requests,
+                  feel free to reach out to us.
+                </p>
+
+                <!-- "Why Choose Us" Section -->
+                <h2 style="margin-top: 30px;">Why Choose Us</h2>
+                <div class="features">
+                  <div class="feature" style="text-align:center;">
+                    <!-- Example icon (could be replaced with your own image) -->
+                    <img
+                      src="https://img.icons8.com/cotton/64/000000/hotel-bed.png"
+                      alt="Premium Quality"
+                      class="feature-icon"
+                    />
+                    <div class="feature-title">Premium Quality</div>
+                    <div class="feature-desc">Five-star amenities and service</div>
+                  </div>
+                  <div class="feature" style="text-align:center;">
+                    <img
+                      src="https://img.icons8.com/cotton/64/000000/wifi.png"
+                      alt="High-Speed Wifi"
+                      class="feature-icon"
+                    />
+                    <div class="feature-title">High-Speed Wifi</div>
+                    <div class="feature-desc">Stay connected throughout your stay</div>
+                  </div>
+                  <div class="feature" style="text-align:center;">
+                    <img
+                      src="https://img.icons8.com/cotton/64/000000/restaurant.png"
+                      alt="Fine Dining"
+                      class="feature-icon"
+                    />
+                    <div class="feature-title">Fine Dining</div>
+                    <div class="feature-desc">Award-winning restaurants</div>
+                  </div>
+                  <div class="feature" style="text-align:center;">
+                    <img
+                      src="https://img.icons8.com/cotton/64/000000/car--v1.png"
+                      alt="Free Parking"
+                      class="feature-icon"
+                    />
+                    <div class="feature-title">Free Parking</div>
+                    <div class="feature-desc">Convenient and secure parking</div>
+                  </div>
+                </div>
+
+                <!-- CTA Button (optional) -->
+                <p style="text-align: center;">
+                  <a
+                    href="https://localhost:8000//bookings"
+                    class="cta-button"
+                    >Manage Your Booking</a
+                  >
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer Section -->
+            <tr>
+              <td class="footer">
+                <p style="margin: 0;">
+                  &copy; {{ current_year }} Hotel XYZ. All rights reserved.
+                  <br />
+                  1234 JM Del Mar St., Cebu City, Philippines
+                </p>
+              </td>
+            </tr>
+          </table>
+          <!-- End Container -->
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
