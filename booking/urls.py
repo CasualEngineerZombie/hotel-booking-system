@@ -17,9 +17,8 @@ urlpatterns = [
         views.create_checkout_session,
         name="create_checkout_session",
     ),
-    path('booking/success/', views.payment_success, name='payment_success'),
-    path('booking/cancel/', views.payment_cancel, name='payment_cancel'),
-    
+    path("booking/success/", views.payment_success, name="payment_success"),
+    path("booking/cancel/", views.payment_cancel, name="payment_cancel"),
     # ADMIN Page
     path("user-admin", views.admin_page, name="admin_page"),
     path("user-admin/room/new", views.admin_add_room, name="admin_add_room"),
@@ -28,7 +27,11 @@ urlpatterns = [
         views.admin_update_room,
         name="admin_update_room",
     ),
-    
+    path(
+        "user-admin/room/<room_uuid>/delete",
+        views.admin_delete_room,
+        name="admin_delete_room",
+    ),
     # Stripe Webhook
-    path('stripe/webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path("stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
 ]

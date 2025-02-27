@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 import uuid
+from django.http import HttpResponseNotAllowed
 
 
 
@@ -77,6 +78,15 @@ def booking_add(request, room_uuid):
         "room": room,
     }
     return render(request, "pages/booking/booking_add.html", context)
+
+
+@admin_required
+def admin_delete_room(request, room_uuid):
+    if request.method == "POST":
+        room = get_object_or_404(Room, room_uuid=room_uuid)
+        room.delete()
+        return redirect("admin_page")
+    return HttpResponseNotAllowed(["POST"])
 
 
 def create_checkout_session(request, room_uuid, booking_uuid):
@@ -254,7 +264,41 @@ def admin_add_room(request):
 
 @admin_required
 def admin_update_room(request, room_uuid):
-    return render(request, "pages/admin/room/admin_update_room.html")
+    room = get_object_or_404(Room, room_uuid=room_uuid)
+    
+    if request.method == "POST":
+        # Update basic fields
+        room.room_name = request.POST.get("name")
+        room.room_type = request.POST.get("type")
+        room.price = request.POST.get("price")
+        room.max_guest = request.POST.get("capacity")
+        room.area = request.POST.get("size")
+        room.description = request.POST.get("description")
+        
+        # Update photo if a new one was provided
+        if request.FILES.get("photo"):
+            room.photo = request.FILES.get("photo")
+        
+        room.save()
+        
+        # Update amenities: clear existing and add new ones
+        amenities_list = request.POST.getlist("amenities")
+        room.amenities.clear()
+        for amenity_name in amenities_list:
+            # Capitalize for consistency (e.g., "wifi" becomes "Wifi")
+            amenity_obj, created = Amenity.objects.get_or_create(name=amenity_name.capitalize())
+            room.amenities.add(amenity_obj)
+        
+        return redirect("admin_page")
+    
+    # For GET: Pre-calculate a list of current amenity names for checkbox checking.
+    room_amenities = list(room.amenities.values_list("name", flat=True))
+    context = {
+        "room": room,
+        "room_amenities": room_amenities,
+    }
+    return render(request, "pages/admin/room/admin_update_room.html", context)
+
 
 
 @csrf_exempt
