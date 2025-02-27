@@ -9,12 +9,13 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from django.template.loader import render_to_string
-from django.contrib.auth.models import User
+from django.template.loader import render_to_string 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
+from django.utils.encoding import force_bytes, force_str 
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 
 @redirect_authenticated_user
@@ -24,8 +25,19 @@ def login_page(request):
         if form.is_valid():
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            # Using email as username; ensure your registration view sets username = email.
-            user = authenticate(request, username=email, password=password)
+            
+            
+            try:
+                user_obj = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user_obj = None
+
+            if user_obj:
+                # Use the actual username of the found user
+                user = authenticate(request, username=user_obj.username, password=password)
+            else:
+                user = None
+
             if user is not None:
                 login(request, user)
                 send_mail(
@@ -41,6 +53,7 @@ def login_page(request):
     else:
         form = LoginForm()
     return render(request, "pages/auth/login.html", {"form": form})
+
 
 
 @redirect_authenticated_user
