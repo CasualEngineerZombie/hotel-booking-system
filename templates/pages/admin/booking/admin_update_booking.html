@@ -1,161 +1,77 @@
-{% extends "pages/booking/booking_base.html" %} 
-
+{% extends "pages/booking/booking_base.html" %}
 {% block content %}
 <div class="max-w-4xl mx-auto px-4 py-8">
-  <a
-    class="flex items-center text-gray-600 hover:text-gray-900 mb-6"
-    href="/admin"
-    data-discover="true"
-    ><svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="lucide lucide-arrow-left h-4 w-4 mr-2"
-    >
+  <a class="flex items-center text-gray-600 hover:text-gray-900 mb-6" href="/admin" data-discover="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left h-4 w-4 mr-2">
       <path d="m12 19-7-7 7-7"></path>
-      <path d="M19 12H5"></path></svg
-    >Back to Admin Dashboard</a
-  >
-  <div
-    class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
-  >
+      <path d="M19 12H5"></path>
+    </svg>
+    Back to Admin Dashboard
+  </a>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="p-6 sm:p-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">Update Booking</h1>
-      <form class="space-y-6">
+      <form class="space-y-6" method="POST">
+        {% csrf_token %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Guest Name -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Guest Name</label
-            ><input
-              type="text"
-              required=""
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value="sad"
-            />
+            <label class="block text-sm font-medium text-gray-700 mb-1">Guest Name</label>
+            <input type="text" name="guest_name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" value="{{ booking.guest_name }}" />
           </div>
+          <!-- Email -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Email</label
-            ><input
-              type="email"
-              required=""
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value="sd@gmail.com"
-            />
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email" name="guest_email" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" value="{{ booking.guest_email }}" />
           </div>
+          <!-- Check-in Date -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Check-in Date</label
-            ><input
-              type="date"
-              required=""
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value="2025-02-18"
-            />
+            <label class="block text-sm font-medium text-gray-700 mb-1">Check-in Date</label>
+            <input type="date" name="check_in" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" value="{{ booking.check_in|date:'Y-m-d' }}" />
           </div>
+          <!-- Check-out Date -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Check-out Date</label
-            ><input
-              type="date"
-              required=""
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value="2025-03-06"
-            />
+            <label class="block text-sm font-medium text-gray-700 mb-1">Check-out Date</label>
+            <input type="date" name="check_out" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" value="{{ booking.check_out|date:'Y-m-d' }}" />
           </div>
+          <!-- Room Type (Dynamic from Room model) -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Room Type</label
-            ><select
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="standard">Standard Room ($199/night)</option>
-              <option value="deluxe">Deluxe Room ($299/night)</option>
-              <option value="suite">Suite ($499/night)</option>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+            <select name="room_type" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+              {% for code, label in room_types %}
+                <option value="{{ code }}" {% if booking.room.room_type == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
             </select>
           </div>
+          <!-- Number of Guests -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Number of Guests</label
-            ><input
-              type="number"
-              min="1"
-              max="10"
-              required=""
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value="1"
-            />
-          </div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
+            <input type="number" name="total_guest" min="1" max="10" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" value="{{ booking.total_guest }}" />
+          </div> 
+          <!-- Payment Status -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Booking Status</label
-            ><select
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"
-              >Payment Status</label
-            ><select
-              class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="paid">Paid</option>
-              <option value="unpaid">Unpaid</option>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+            <select name="payment_status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+              <option value="paid" {% if booking.paid %}selected{% endif %}>Paid</option>
+              <option value="unpaid" {% if not booking.paid %}selected{% endif %}>Unpaid</option>
             </select>
           </div>
         </div>
+        <!-- Special Requests -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Special Requests</label
-          ><textarea
-            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
-            rows="4"
-          >
-asd</textarea
-          >
+          <label class="block text-sm font-medium text-gray-700 mb-1">Special Requests</label>
+          <textarea name="special_request" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none" rows="4">{{ booking.special_request }}</textarea>
         </div>
         <div class="flex justify-between items-center pt-4">
-          <div class="text-sm text-gray-600">
-            <span>Price: </span><span class="font-semibold">$3184</span
-            ><span class="text-xs text-gray-500 ml-1"
-              >(calculated based on room type and dates)</span
-            >
-          </div>
+           
           <div class="flex gap-4">
-            <button
-              type="button"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Cancel</button
-            ><button
-              type="submit"
-              class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-            >
-              Save Changes<svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-save w-4 h-4 ml-2"
-              >
-                <path
-                  d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
-                ></path>
+            <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Cancel
+            </button>
+            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+              Save Changes
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save w-4 h-4 ml-2">
+                <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
                 <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"></path>
                 <path d="M7 3v4a1 1 0 0 0 1 1h7"></path>
               </svg>

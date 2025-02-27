@@ -11,7 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 import stripe
 import uuid
 from django.http import HttpResponseNotAllowed
-
+from django.utils.dateparse import parse_date
+from booking.utils import calculate_total_price
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -89,9 +90,62 @@ def admin_delete_room(request, room_uuid):
     return HttpResponseNotAllowed(["POST"])
 
 
+@admin_required
+def admin_update_booking(request, booking_uuid):
+    booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+    
+    if request.method == "POST":
+        # Update guest details
+        booking.guest_name = request.POST.get("guest_name")
+        booking.guest_email = request.POST.get("guest_email")
+        
+        # Update dates (expects YYYY-MM-DD format)
+        booking.check_in = parse_date(request.POST.get("check_in"))
+        booking.check_out = parse_date(request.POST.get("check_out"))
+        
+        # Update room type using available rooms with matching type.
+        new_room_type = request.POST.get("room_type")
+        if new_room_type:
+            # This lookup is simplistic; in a production system you might let admin choose a specific room.
+            new_room = Room.objects.filter(room_type__iexact=new_room_type, is_available=True).first()
+            if new_room:
+                booking.room = new_room
+        
+        # Update number of guests
+        booking.total_guest = request.POST.get("total_guest")
+        
+        # Update booking status (ensure your Booking model supports this field or remove if not used)
+        booking.status = request.POST.get("status")
+        
+        # Update payment status
+        payment_status = request.POST.get("payment_status")
+        booking.paid = True if payment_status == "paid" else False
+        
+        # Update special requests
+        booking.special_request = request.POST.get("special_request")
+        
+        booking.save()
+        return redirect("admin_page")  # Adjust URL name as needed.
+    
+    # Pass the Room model's ROOM_TYPES to the template for dynamic select options.
+    context = {
+        "booking": booking,
+        "room": booking.room,
+        "room_types": Room.ROOM_TYPES,  # e.g. [('Single', 'Single'), ('Double', 'Double'), ('Suite', 'Suite')]
+    }
+    return render(request, "pages/admin/booking/admin_update_booking.html", context)
+
+
+
+@login_required
 def create_checkout_session(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+    
+    # Calculate the total price based on the room's nightly price and the number of nights.
+    total_price = calculate_total_price(room.price, booking.check_in, booking.check_out)
+    # Stripe expects amounts in the smallest currency unit (e.g. centavos)
+    amount_in_cents = int(total_price * 100)
 
     checkout_session = stripe.checkout.Session.create(
         payment_method_types=["card"],
@@ -100,29 +154,27 @@ def create_checkout_session(request, room_uuid, booking_uuid):
                 "price_data": {
                     "currency": "php",
                     "product_data": {
-                        # 'images': [room.photo.url],
                         "name": room.room_name,
                         "description": room.description,
                     },
-                    "unit_amount": int(room.price * 100),
+                    "unit_amount": amount_in_cents,
                 },
                 "quantity": 1,
             },
         ],
         mode="payment",
         customer_email=request.user.email,
-        success_url=settings.YOUR_DOMAIN
-        + f"/booking/success/?session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url=settings.YOUR_DOMAIN
-        + f"/booking/cancel/?session_id={{CHECKOUT_SESSION_ID}}",
+        success_url=settings.YOUR_DOMAIN + f"/booking/success/?session_id={{CHECKOUT_SESSION_ID}}",
+        cancel_url=settings.YOUR_DOMAIN + f"/booking/cancel/?session_id={{CHECKOUT_SESSION_ID}}",
         metadata={
             "total_guest": booking.total_guest,
             "booking_uuid": booking.booking_uuid,
             "room_uuid": room.room_uuid,
         },
     )
-
+    
     return redirect(checkout_session.url)
+
 
 
 def payment_success(request):
@@ -141,6 +193,7 @@ def payment_success(request):
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
     room = booking.room  # assuming Booking has a foreign key to Room
     payment_id = session.get("payment_intent")
+    total_price = calculate_total_price(room.price, booking.check_in, booking.check_out)
 
     # Prepare and send a confirmation email to the guest
     subject = "Booking Confirmation"
@@ -148,6 +201,7 @@ def payment_success(request):
         "booking": booking,
         "room": room,
         "payment_id": payment_id,
+        "total_price": total_price,
     }
     message_html = render_to_string("emails/booking_confirmation_email.html", email_context)
     recipient_list = [booking.guest_email]
@@ -163,6 +217,7 @@ def payment_success(request):
         "booking": booking,
         "room": room,
         "payment_id": payment_id,
+         "total_price": total_price,
     }
     return render(request, "pages/checkout/payment_success.html", context)
 
@@ -176,10 +231,12 @@ def payment_cancel(request):
         booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
         room = booking.room  # assuming Booking has a foreign key to Room
         payment_id = session.get("payment_intent")
+        total_price = calculate_total_price(room.price, booking.check_in, booking.check_out)
         context = {
             "booking": booking,
             "room": room,
             "payment_id": payment_id,
+            "total_price": total_price,
         }
         return render(request, "pages/checkout/payment_cancel.html", context)
     # Optionally handle missing session_id
@@ -200,11 +257,23 @@ def room_list(request):
 def checkout_page(request, room_uuid, booking_uuid):
     room = get_object_or_404(Room, room_uuid=room_uuid)
     booking = get_object_or_404(Booking, booking_uuid=booking_uuid)
+    
+    # Calculate total price for the stay
+    total_price = calculate_total_price(room.price, booking.check_in, booking.check_out)
+    
+    # Calculate the number of nights (minimum 1)
+    nights = (booking.check_out - booking.check_in).days
+    if nights < 1:
+        nights = 1
+
     context = {
         "room": room,
         "booking": booking,
+        "total_price": total_price,
+        "nights": nights,
     }
     return render(request, "pages/checkout/checkout_booking.html", context)
+
 
 
 @admin_required

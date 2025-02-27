@@ -50,7 +50,7 @@
         </div>
         <div>
           <span class="text-sm text-gray-500">Total Amount</span>
-          <p class="font-medium">₱{{ room.price|floatformat:"0"|intcomma }}</p>
+          <p class="font-medium">₱{{ total_price|floatformat:"0"|intcomma }}</p>
         </div>
         {% if payment_id %}
         <div>

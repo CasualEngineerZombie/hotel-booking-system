@@ -1,9 +1,9 @@
-{% extends "pages/booking/booking_base.html" %} 
+{% extends "pages/booking/booking_base.html" %}
 {% load humanize %}
 {% block content %}
 <main>
   <div class="max-w-3xl mx-auto px-4 py-8">
-    <a href="{%url 'rooms'%}" class="flex items-center text-gray-600 hover:text-gray-900 mb-6">
+    <a href="{% url 'rooms' %}" class="flex items-center text-gray-600 hover:text-gray-900 mb-6">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -17,17 +17,17 @@
         class="lucide lucide-arrow-left h-4 w-4 mr-1"
       >
         <path d="m12 19-7-7 7-7"></path>
-        <path d="M19 12H5"></path></svg
-      >Back to Booking
+        <path d="M19 12H5"></path>
+      </svg>
+      Back to Booking
     </a>
-    <div
-      class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
-    >
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div class="p-8">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">
           Complete Your Booking
         </h1>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Left Column: Booking Summary -->
           <div class="space-y-6">
             <div>
               <h2 class="text-lg font-semibold text-gray-900 mb-4">
@@ -36,11 +36,11 @@
               <div class="bg-gray-50 rounded-lg p-4 space-y-3">
                 <div>
                   <span class="text-sm text-gray-500">Room Type</span>
-                  <p class="font-medium capitalize">{{room.room_type}}</p>
+                  <p class="font-medium capitalize">{{ room.room_type }}</p>
                 </div>
                 <div>
                   <span class="text-sm text-gray-500">Guest</span>
-                  <p class="font-medium">{{booking.guest_name}}</p>
+                  <p class="font-medium">{{ booking.guest_name }}</p>
                 </div>
                 <div>
                   <span class="text-sm text-gray-500">Check-in</span>
@@ -52,32 +52,34 @@
                 </div>
                 <div>
                   <span class="text-sm text-gray-500">Guests</span>
-                  <p class="font-medium">{{booking.total_guest}} person</p>
+                  <p class="font-medium">{{ booking.total_guest }} person</p>
                 </div>
               </div>
             </div>
+
+            <!-- Price Details -->
             <div>
               <h2 class="text-lg font-semibold text-gray-900 mb-4">
                 Price Details
               </h2>
               <div class="bg-gray-50 rounded-lg p-4 space-y-3">
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Room charges</span
-                  ><span class="font-medium">₱{{room.price|floatformat:"0"|intcomma}}</span>
+                  <span class="text-gray-500">Room charges ({{ nights }} night{% if nights > 1 %}s{% endif %})</span>
+                  <span class="font-medium">₱{{ total_price|floatformat:"0"|intcomma }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Taxes &amp; fees</span
-                  ><span class="font-medium">Included</span>
+                  <span class="text-gray-500">Taxes &amp; fees</span>
+                  <span class="font-medium">Included</span>
                 </div>
-                <div
-                  class="border-t border-gray-200 pt-3 flex justify-between items-center"
-                >
-                  <span class="font-semibold">Total</span
-                  ><span class="text-lg font-bold">₱{{room.price|floatformat:"0"|intcomma}}</span>
+                <div class="border-t border-gray-200 pt-3 flex justify-between items-center">
+                  <span class="font-semibold">Total</span>
+                  <span class="text-lg font-bold">₱{{ total_price|floatformat:"0"|intcomma }}</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Right Column: Payment -->
           <div>
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment</h2>
             <div class="bg-gray-50 rounded-lg p-6">
@@ -85,18 +87,27 @@
                 Your payment will be processed securely through Stripe. No
                 payment information is stored on our servers.
               </p>
-              <a href="{% url 'create_checkout_session' room_uuid=room.room_uuid booking_uuid=booking.booking_uuid %}"
-                class="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                      width="24" height="24" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="lucide lucide-credit-card w-5 h-5 mr-2">
-                      <rect width="20" height="14" x="2" y="5" rx="2"></rect>
-                      <line x1="2" x2="22" y1="10" y2="10"></line>
-                  </svg>
-                  Pay ₱{{ room.price|floatformat:"0"|intcomma }}
+              <a
+                href="{% url 'create_checkout_session' room_uuid=room.room_uuid booking_uuid=booking.booking_uuid %}"
+                class="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-credit-card w-5 h-5 mr-2"
+                >
+                  <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+                  <line x1="2" x2="22" y1="10" y2="10"></line>
+                </svg>
+                Pay ₱{{ total_price|floatformat:"0"|intcomma }}
               </a>
-
               <p class="mt-4 text-sm text-gray-500 text-center">
                 By proceeding with the payment, you agree to our terms and
                 conditions.
