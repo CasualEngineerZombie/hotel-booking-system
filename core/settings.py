@@ -13,18 +13,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-@dfjletazv$b(-)sj=79)owig5rmx_u+c*o8a!@dy&hwz6(u$q"
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-@dfjletazv$b(-)sj=79)owig5rmx_u+c*o8a!@dy&hwz6(u$q")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS = [
-    "*",
-]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://fleet-fowl-select.ngrok-free.app"
-]
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["https://fleet-fowl-select.ngrok-free.app"])
 
 # Application definition
 
@@ -38,11 +34,13 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "booking",
     "users", 
+    "whitenoise.runserver_nostatic",  # Add WhiteNoise for static files
 ]
 
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Add WhiteNoise middleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -117,8 +115,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"  # For collectstatic on Fly.io
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -141,7 +140,6 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
  
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY") 
-YOUR_DOMAIN = "http://localhost:8000"   
+YOUR_DOMAIN = env("YOUR_DOMAIN", default="http://localhost:8000")   
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
 
- 

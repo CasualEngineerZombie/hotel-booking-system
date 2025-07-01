@@ -1,0 +1,38 @@
+# fly.toml app configuration file generated for hotel-booking on 2025-07-01T16:50:35+08:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'hotel-booking'
+primary_region = 'sin'
+console_command = '/code/manage.py shell'
+
+[experimental]
+  auto_rollback = true
+
+[build]
+
+[deploy]
+  release_command = 'python manage.py migrate'
+
+[env]
+  DJANGO_SETTINGS_MODULE = 'core.settings'
+  PORT = '8000'
+  PYTHONUNBUFFERED = '1'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[[statics]]
+  guest_path = '/code/static'
+  url_prefix = '/static/'

@@ -17,6 +17,7 @@ staticfiles/
 .venv/ 
 env/ 
 venv/ 
+.env.*
  
 # IDEs and Editors 
 .idea/ 
@@ -33,3 +34,4 @@ venv/
 Thumbs.db 
 
 node_modules
+package-lock.json
